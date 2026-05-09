@@ -158,7 +158,15 @@ const Candidates: React.FC = () => {
     },
     { field: 'email', headerName: 'Email', flex: 1.2 },
     { field: 'role', headerName: 'Applied Role', flex: 1.2 },
-    { field: 'experience', headerName: 'Experience', flex: 1 },
+    { 
+      field: 'experience', 
+      headerName: 'Experience', 
+      flex: 1,
+      cellRenderer: (params: any) => {
+        const val = String(params.value || '0').toLowerCase().replace('years', '').replace('year', '').trim();
+        return <span className="font-medium text-slate-600">{val} {parseInt(val) === 1 ? 'Year' : 'Years'}</span>;
+      }
+    },
     { 
       field: 'status', 
       headerName: 'Status',
@@ -216,10 +224,10 @@ const Candidates: React.FC = () => {
               </FilterPanel.Group>
 
               <FilterPanel.Group name="experience" title="Experience Level">
-                <FilterPanel.Item group="experience" value="Entry">Entry</FilterPanel.Item>
-                <FilterPanel.Item group="experience" value="Junior">Junior</FilterPanel.Item>
-                <FilterPanel.Item group="experience" value="Senior">Senior</FilterPanel.Item>
-                <FilterPanel.Item group="experience" value="Expert">Expert</FilterPanel.Item>
+                <FilterPanel.Item group="experience" value="1">1 Year</FilterPanel.Item>
+                <FilterPanel.Item group="experience" value="3">3 Years</FilterPanel.Item>
+                <FilterPanel.Item group="experience" value="5">5 Years</FilterPanel.Item>
+                <FilterPanel.Item group="experience" value="7">7 Years</FilterPanel.Item>
               </FilterPanel.Group>
             </FilterPanel>
           </div>
