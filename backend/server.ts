@@ -43,14 +43,14 @@ app.post('/api/auth/register', async (req: Request, res: Response) => {
 app.post('/api/auth/login', async (req: Request, res: Response) => {
   try {
     const { username, password } = req.body;
-    
+
     if (username === 'admin' && password === 'password') {
       return res.json({ name: 'Admin', role: 'admin' });
     }
 
-    const user = await User.findOne({ 
-      $or: [{ username: username }, { email: username }], 
-      password: password 
+    const user = await User.findOne({
+      $or: [{ username: username }, { email: username }],
+      password: password
     });
 
     if (!user) {
@@ -68,9 +68,9 @@ app.get('/api/candidates', async (req: Request, res: Response) => {
     const q = String(req.query.q || req.query.search || '').trim();
     const status = String(req.query.status || '');
     const experience = String(req.query.experience || '');
-    
+
     console.log(`[DEBUG] Filters - Search: "${q}", Status: "${status}", Exp: "${experience}"`);
-    
+
     let query: any = {};
     const conditions: any[] = [];
 
@@ -93,7 +93,7 @@ app.get('/api/candidates', async (req: Request, res: Response) => {
     // Experience filter logic
     if (experience) {
       const expArray = experience.split(',');
-      conditions.push({ 
+      conditions.push({
         $or: expArray.map(exp => ({ experience: new RegExp(exp, 'i') }))
       });
     }
@@ -145,7 +145,7 @@ app.get('/api/jobs', async (req: Request, res: Response) => {
   try {
     const q = String(req.query.q || req.query.search || '').trim();
     console.log(`[DEBUG] Received jobs search query: "${q}"`);
-    
+
     let query = {};
     if (q) {
       const regex = new RegExp(q, 'i');

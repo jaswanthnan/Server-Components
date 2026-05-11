@@ -33,16 +33,26 @@ export const FilterPanel: React.FC<FilterPanelProps> & {
   }, [filters, onChange]);
 
   const toggleFilter = (group: string, value: string) => {
+    console.log(`%c[FilterPanel]%c Toggling %c${value}%c in group %c${group}`, 'color: #10b981; font-weight: bold', 'color: inherit', 'color: #3b82f6; font-weight: bold', 'color: inherit', 'color: #3b82f6; font-weight: bold');
     setFilters(prev => {
       const currentGroup = prev[group] || [];
-      const newGroup = currentGroup.includes(value)
+      const isRemoving = currentGroup.includes(value);
+      const newGroup = isRemoving
         ? currentGroup.filter(v => v !== value)
         : [...currentGroup, value];
+      
+      if (isRemoving) {
+        console.log(`%c[FilterPanel]%c Removed %c${value}`, 'color: #ef4444; font-weight: bold', 'color: inherit', 'font-weight: bold');
+      } else {
+        console.log(`%c[FilterPanel]%c Added %c${value}`, 'color: #10b981; font-weight: bold', 'color: inherit', 'font-weight: bold');
+      }
+      
       return { ...prev, [group]: newGroup };
     });
   };
 
   const clearGroup = (group: string) => {
+    console.log(`%c[FilterPanel]%c Clearing group: %c${group}`, 'color: #f59e0b; font-weight: bold', 'color: inherit', 'color: #f59e0b; font-weight: bold');
     setFilters(prev => {
       const { [group]: _, ...rest } = prev;
       return rest;

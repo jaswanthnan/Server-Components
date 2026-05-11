@@ -54,6 +54,11 @@ const AppLayout = () => {
       icon: <ProfileOutlined />,
       label: <NavLink to="/jobs">Jobs</NavLink>,
     },
+    {
+      key: 'patterns',
+      icon: <BulbOutlined />,
+      label: <NavLink to="/patterns">Patterns</NavLink>,
+    },
   ];
 
   const userMenuItems = [
