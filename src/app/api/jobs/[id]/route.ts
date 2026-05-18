@@ -4,16 +4,17 @@ import Job from '@/lib/models/Job';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
-    const job = await Job.findById(params.id).lean();
-    
+    const { id } = await params;
+    const job = await Job.findById(id).lean();
+
     if (!job) {
       return NextResponse.json({ error: 'Job not found' }, { status: 404 });
     }
-    
+
     return NextResponse.json(job);
   } catch (error) {
     console.error('API Job GET Error:', error);
@@ -23,17 +24,18 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
+    const { id } = await params;
     const body = await request.json();
-    const job = await Job.findByIdAndUpdate(params.id, body, { new: true }).lean();
-    
+    const job = await Job.findByIdAndUpdate(id, body, { new: true }).lean();
+
     if (!job) {
       return NextResponse.json({ error: 'Job not found' }, { status: 404 });
     }
-    
+
     return NextResponse.json(job);
   } catch (error: any) {
     console.error('API Job PATCH Error:', error);
@@ -43,16 +45,17 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
-    const job = await Job.findByIdAndDelete(params.id);
-    
+    const { id } = await params;
+    const job = await Job.findByIdAndDelete(id);
+
     if (!job) {
       return NextResponse.json({ error: 'Job not found' }, { status: 404 });
     }
-    
+
     return NextResponse.json({ message: 'Job deleted successfully' });
   } catch (error) {
     console.error('API Job DELETE Error:', error);

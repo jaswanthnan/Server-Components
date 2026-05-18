@@ -37,7 +37,7 @@ export default function Sidebar() {
 
       <nav className="flex-1 px-3 py-6 space-y-1">
         {navigation.map((item) => {
-          const isActive = pathname.startsWith(item.href);
+          const isActive = pathname?.startsWith(item.href) ?? false;
           return (
             <Link
               key={item.name}

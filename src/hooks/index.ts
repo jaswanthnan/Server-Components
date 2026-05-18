@@ -109,7 +109,7 @@ export const useFetch = <T>(url: string, options: RequestInit = {}): FetchResult
  * Useful for lazy loading and scroll-based features.
  */
 export const useIntersectionObserver = (
-  ref: RefObject<HTMLElement>,
+  ref: RefObject<HTMLElement | null>,
   options: IntersectionObserverInit = {}
 ): boolean => {
   const [isIntersecting, setIntersecting] = useState<boolean>(false);

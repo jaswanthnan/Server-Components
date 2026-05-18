@@ -4,11 +4,12 @@ import Candidate from '@/lib/models/Candidate';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
-    const candidate = await Candidate.findById(params.id).lean();
+    const { id } = await params;
+    const candidate = await Candidate.findById(id).lean();
     
     if (!candidate) {
       return NextResponse.json({ error: 'Candidate not found' }, { status: 404 });
@@ -23,12 +24,13 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
+    const { id } = await params;
     const body = await request.json();
-    const candidate = await Candidate.findByIdAndUpdate(params.id, body, { new: true }).lean();
+    const candidate = await Candidate.findByIdAndUpdate(id, body, { new: true }).lean();
     
     if (!candidate) {
       return NextResponse.json({ error: 'Candidate not found' }, { status: 404 });
@@ -43,11 +45,12 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
-    const candidate = await Candidate.findByIdAndDelete(params.id);
+    const { id } = await params;
+    const candidate = await Candidate.findByIdAndDelete(id);
     
     if (!candidate) {
       return NextResponse.json({ error: 'Candidate not found' }, { status: 404 });

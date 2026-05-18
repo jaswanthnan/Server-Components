@@ -15,7 +15,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 export default function SearchPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const initialQuery = searchParams.get('q') || '';
+  const initialQuery = searchParams?.get('q') || '';
   
   const [query, setQuery] = useState(initialQuery);
   const [results, setResults] = useState<{ candidates: any[], jobs: any[] } | null>(null);

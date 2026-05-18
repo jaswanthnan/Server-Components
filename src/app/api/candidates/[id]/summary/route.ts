@@ -4,11 +4,12 @@ import Candidate from '@/lib/models/Candidate';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
-    const candidate = await Candidate.findById(params.id).select('name role status skills experience').lean();
+    const { id } = await params;
+    const candidate = await Candidate.findById(id).select('name role status skills experience').lean();
     
     if (!candidate) {
       return NextResponse.json({ error: 'Candidate not found' }, { status: 404 });

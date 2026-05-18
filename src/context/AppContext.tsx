@@ -25,27 +25,30 @@ type AppAction =
 const getInitialState = (): AppState => {
   let user = null;
   let isAuthenticated = false;
-  
-  try {
-    const savedUser = localStorage.getItem('auth_user');
-    
-    // Safely check if savedUser exists and is not a corrupted string
-    if (savedUser && savedUser !== 'undefined' && savedUser !== 'null') {
-      user = JSON.parse(savedUser);
-      isAuthenticated = true;
-    } else if (savedUser === 'undefined' || savedUser === 'null') {
-      // Clear corrupt data
+  let theme: 'light' | 'dark' = 'light';
+
+  if (typeof window !== 'undefined') {
+    try {
+      const savedUser = localStorage.getItem('auth_user');
+
+      if (savedUser && savedUser !== 'undefined' && savedUser !== 'null') {
+        user = JSON.parse(savedUser);
+        isAuthenticated = true;
+      } else if (savedUser === 'undefined' || savedUser === 'null') {
+        localStorage.removeItem('auth_user');
+      }
+    } catch (error) {
+      console.error("Failed to parse auth_user from localStorage", error);
       localStorage.removeItem('auth_user');
     }
-  } catch (error) {
-    console.error("Failed to parse auth_user from localStorage", error);
-    localStorage.removeItem('auth_user');
+
+    theme = (localStorage.getItem('theme') as 'light' | 'dark') || 'light';
   }
 
   return {
     user,
     isAuthenticated,
-    theme: (localStorage.getItem('theme') as 'light' | 'dark') || 'light',
+    theme,
     isLoading: false,
     error: null,
   };
@@ -56,10 +59,10 @@ const initialState: AppState = getInitialState();
 const appReducer = (state: AppState, action: AppAction): AppState => {
   switch (action.type) {
     case 'LOGIN':
-      localStorage.setItem('auth_user', JSON.stringify(action.payload));
+      if (typeof window !== 'undefined') localStorage.setItem('auth_user', JSON.stringify(action.payload));
       return { ...state, user: action.payload, isAuthenticated: true };
     case 'LOGOUT':
-      localStorage.removeItem('auth_user');
+      if (typeof window !== 'undefined') localStorage.removeItem('auth_user');
       return { ...state, user: null, isAuthenticated: false };
     case 'SET_LOADING':
       return { ...state, isLoading: action.payload };
@@ -67,7 +70,7 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
       return { ...state, error: action.payload };
     case 'TOGGLE_THEME':
       const nextTheme = state.theme === 'light' ? 'dark' : 'light';
-      localStorage.setItem('theme', nextTheme);
+      if (typeof window !== 'undefined') localStorage.setItem('theme', nextTheme);
       return { ...state, theme: nextTheme };
     default:
       return state;

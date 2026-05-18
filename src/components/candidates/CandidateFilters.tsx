@@ -9,10 +9,10 @@ const statuses = ['Applied', 'Screening', 'Interviewing', 'Offered', 'Hired', 'R
 export default function CandidateFilters() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const currentStatus = searchParams.get('status');
+  const currentStatus = searchParams?.get('status');
 
   const setFilter = (status: string | null) => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(searchParams?.toString());
     if (status) {
       params.set('status', status);
     } else {

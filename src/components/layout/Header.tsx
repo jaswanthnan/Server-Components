@@ -8,10 +8,10 @@ export default function Header() {
   const pathname = usePathname();
   
   // Map path to page name
-  const pageName = pathname === '/dashboard' ? 'Dashboard' 
-                 : pathname.startsWith('/candidates') ? 'Candidates'
-                 : pathname.startsWith('/jobs') ? 'Jobs'
-                 : pathname.startsWith('/search') ? 'Search'
+  const pageName = pathname === '/dashboard' ? 'Dashboard'
+                 : pathname?.startsWith('/candidates') ? 'Candidates'
+                 : pathname?.startsWith('/jobs') ? 'Jobs'
+                 : pathname?.startsWith('/search') ? 'Search'
                  : '';
 
   return (

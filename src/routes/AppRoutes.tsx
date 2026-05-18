@@ -1,19 +1,19 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
-import Home from '../pages/Home/Home';
-import Dashboard from '../pages/Dashboard/Dashboard';
-import Candidates from '../pages/Candidates/Candidates';
-import Jobs from '../pages/Jobs/Jobs';
-import Login from '../pages/Login/Login';
-import Register from '../pages/Register/Register';
+import Home from '../views/Home/Home';
+import Dashboard from '../views/Dashboard/Dashboard';
+import Candidates from '../views/Candidates/Candidates';
+import Jobs from '../views/Jobs/Jobs';
+import Login from '../views/Login/Login';
+import Register from '../views/Register/Register';
 import ProtectedRoute from './ProtectedRoute';
-import NotFound from '../pages/NotFound/NotFound';
-import PatternsDemo from '../pages/PatternsDemo';
+import NotFound from '../views/NotFound/NotFound';
+import PatternsDemo from '../views/PatternsDemo';
 
 const AppRoutes: React.FC = () => {
   return (
-    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+    <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
