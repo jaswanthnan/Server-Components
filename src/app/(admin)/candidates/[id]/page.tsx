@@ -14,7 +14,6 @@ import {
 import Link from 'next/link';
 import { formatDate } from '@/lib/utils';
 
-export const dynamic = 'force-dynamic';
 
 export default async function CandidateDetailPage({
   params,

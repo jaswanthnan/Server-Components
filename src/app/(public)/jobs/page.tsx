@@ -21,11 +21,7 @@ import Link from 'next/link';
  * 3. next.revalidate: Controls how often the page should be re-generated.
  */
 
-// CONCEPT: Segment Config - This page revalidates every 60 seconds
-export const revalidate = 60; 
 
-// CONCEPT: Dynamic Params - Allows new jobs to be added without a full rebuild
-export const dynamicParams = true;
 
 async function getJobs() {    
   await dbConnect();
@@ -42,7 +38,10 @@ async function getJobs() {
   return Job.find({ status: 'Open' }).sort({ createdAt: -1 }).lean();
 }
 
+import { connection } from 'next/server';
+
 export default async function PublicJobsPage() {
+  await connection();
   const jobs = await getJobs();
   
   // This timestamp is baked into the static page on the server.

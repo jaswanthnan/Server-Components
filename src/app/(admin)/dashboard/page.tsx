@@ -16,13 +16,12 @@ import RecentCandidates from '@/components/dashboard/RecentCandidates';
  * This page is rendered on the server for EVERY request.
  */
 
-// CONCEPT: dynamic Config - Forces the page to be dynamic
-export const dynamic = 'force-dynamic';
 
-// CONCEPT: revalidate Config - Setting to 0 also forces dynamic rendering
-export const revalidate = 60;
+
+import { connection } from 'next/server';
 
 export default async function DashboardPage() {
+  await connection();
   // CONCEPT: no-store Simulation
   // In a real app, you'd fetch with { cache: 'no-store' }
   const lastFetch = new Date().toLocaleTimeString();
