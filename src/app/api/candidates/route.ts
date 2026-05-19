@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Candidate from '@/lib/models/Candidate';
+import { serverCandidateSchema } from '@/schemas/candidateSchema';
 
 export async function GET(request: NextRequest) {
   try {
@@ -23,10 +24,21 @@ export async function POST(request: NextRequest) {
   try {
     await dbConnect();
     const body = await request.json();
-    const candidate = await Candidate.create(body);
+    
+    // Request validation with Zod
+    const validationResult = serverCandidateSchema.safeParse(body);
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: validationResult.error.format() },
+        { status: 400 }
+      );
+    }
+    
+    const candidate = await Candidate.create(validationResult.data);
     return NextResponse.json(candidate, { status: 201 });
   } catch (error: any) {
     console.error('API Candidates POST Error:', error);
     return NextResponse.json({ error: error.message || 'Failed to create candidate' }, { status: 400 });
   }
 }
+

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Job from '@/lib/models/Job';
+import { jobSchema } from '@/schemas/jobSchema';
 
 export async function GET(request: NextRequest) {
   try {
@@ -26,10 +27,21 @@ export async function POST(request: NextRequest) {
   try {
     await dbConnect();
     const body = await request.json();
-    const job = await Job.create(body);
+    
+    // Request validation with Zod
+    const validationResult = jobSchema.safeParse(body);
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: validationResult.error.format() },
+        { status: 400 }
+      );
+    }
+    
+    const job = await Job.create(validationResult.data);
     return NextResponse.json(job, { status: 201 });
   } catch (error: any) {
     console.error('API Jobs POST Error:', error);
     return NextResponse.json({ error: error.message || 'Failed to create job' }, { status: 400 });
   }
 }
+

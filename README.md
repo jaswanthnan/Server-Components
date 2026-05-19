@@ -1,41 +1,66 @@
-# ⚡ HireSync - Full-Stack Recruitment CRM (Next.js App Router)
+# ⚡ HireSync - Full-Stack Recruitment CRM (Next.js 16 & Auth.js v5)
 
-HireSync is a high-performance, modern Recruitment CRM and HRMS Dashboard built using Next.js 15+, React, Tailwind CSS, and MongoDB. 
+HireSync is a high-performance, modern Full-Stack Recruitment CRM and HRMS Dashboard built using the cutting-edge **Next.js 16**, **React 19**, **Tailwind CSS**, and **MongoDB**. 
 
-This project demonstrates the peak capabilities of the **Next.js App Router**, leveraging advanced features like **Partial Prerendering (PPR)**, **React Suspense Streaming**, **Server Components**, and custom **Shadcn-style Skeleton animations**.
+This system acts as a premium enterprise HR platform, incorporating highly robust authentication, custom middleware proxies, secure route-level redirects, request rewrites, and strict validation pipelines.
+
+---
+
+## 🗺️ Architectural Traffic & Authentication Flow
+
+The following Mermaid diagram maps how request security, rewriting, and route protections are executed:
+
+```mermaid
+graph TD
+    A[Client Request] --> B{Next.js 16 Proxy}
+    B -- Request to /careers --> C[Rewrite to /jobs]
+    B -- Static Assets / Favicon --> D[Serve Directly]
+    B -- Protected Routes <br> /dashboard, /candidates, /jobs --> E{Is Authenticated?}
+    E -- No --> F[Redirect to /login]
+    E -- Yes --> G[Serve Route / Read Server-side Session]
+    B -- Guest-Only Routes <br> /login, /register --> H{Is Authenticated?}
+    H -- Yes --> I[Redirect to /dashboard]
+    H -- No --> J[Serve Page]
+```
 
 ---
 
 ## ✨ Features & Architecture Highlights
 
-### ⚡ 1. Native Full-Stack Architecture (Zero Express)
-We migrated away from the traditional separate frontend/backend architecture. All database controllers, models, and routes now run natively inside Next.js.
-*   **API Route Handlers**: Authentication routes (`/api/auth/login`, `/api/auth/register`) and candidates routes are built directly into `src/app/api`.
-*   **Mongoose Models**: Hotswappable Mongoose schemas with connection caching to optimize serverless execution.
+### 🔒 1. Auth.js (NextAuth v5) & Custom Session Management
+Secure, decoupled JWT-based authentication system supporting multiple provider structures:
+*   **Database Credentials Provider**: Validates users natively against MongoDB collections. Includes a plaintext password comparison pipeline aligned with our secure API register controller.
+*   **Hardcoded Demo Gateway**: Includes a seamless backend bypass for rapid demonstration (`admin` / `password`).
+*   **OAuth Providers Ready**: Pre-wired integration hooks for major social sign-in endpoints (GitHub, Google).
+*   **JWT & Session Callbacks**: Custom mapping logic inside NextAuth callbacks that propagates custom claims (like user Roles: `admin`, `recruiter`) from MongoDB directly into the active session.
 
-### ◐ 2. Partial Prerendering (PPR)
-Configured using `cacheComponents: true` in `next.config.ts`.
-*   **Instant Shells**: The static parts of the layout (Sidebar, navigation, and page containers) are compiled at build time and served instantly from the edge cache.
-*   **Dynamic Chunks**: Interactive pages like the Search Dashboard and Candidates List load dynamic database content inside targeted placeholders, creating a blazing-fast user experience.
+### 🛡️ 2. Modern Next.js 16 proxy.ts Middleware
+Using Next.js 16's modern standard, the deprecated `middleware.ts` is replaced by the robust Node-compatible [proxy.ts](file:///c:/Users/pawan/Server-Components/src/proxy.ts) engine:
+*   **Secure Route Groups**: Automatically intercepts and blocks unauthorized access to `/dashboard`, `/candidates`, and `/jobs`.
+*   **Request Rewriting**: Intercepts inbound calls to `/careers` and silently rewrites them to public `/jobs` internally without modifying the client-side browser URL.
+*   **Smart Matching Exclusions**: Uses optimized regular expression matching configurations to exclude internal files, Favicon, CSS, JS, and image assets from processing cycles.
 
-### 🌊 3. React Suspense Streaming
-Slow database fetches are isolated into nested Server Components and wrapped inside React `<Suspense>` boundaries.
-*   **Non-Blocking SSR**: High-latency MongoDB queries no longer block the page load.
-*   **Table-to-Grid Streaming**: Features like the `/candidates` list table stream directly into the UI over the network.
+### 🧪 3. Custom Pre-Login validation & Granular Zod Checks
+*   **Pre-Login Verification Endpoint**: An isolated endpoint ([/api/auth/login-validate](file:///c:/Users/pawan/Server-Components/src/app/api/auth/login-validate/route.ts)) intercepts credential submit events before NextAuth starts. It checks the database and provides explicit granular client feedback:
+    *   **Wrong Email/Username**: Displays *"Enter proper email"*.
+    *   **Wrong Password**: Displays *"Enter proper password"*.
+*   **REST Endpoint Validation**: Every serverless route uses **Zod schemas** to enforce type-safety and reject malformed payloads prior to performing database write operations:
+    *   `/api/auth/register` (uses `registerSchema`)
+    *   `/api/candidates` (uses `serverCandidateSchema`)
+    *   `/api/jobs` (uses `jobSchema`)
 
-### 🎨 4. Custom Shadcn-Style Skeleton Placeholders
-To eliminate layout shifts (CLS) and keep the UI feeling premium:
-*   We created an atomic `<Skeleton />` component featuring custom keyframe-pulsing animations.
-*   Tailored page skeletons (like `<CandidatesTableSkeleton />`) precisely mimic the geometry of the target grids while they load.
+### ⚡ 4. Dynamic Server Component Welcoming
+The main admin page ([page.tsx](file:///c:/Users/pawan/Server-Components/src/app/(admin)/dashboard/page.tsx)) extracts credentials directly on the server side using the lightweight `auth()` helper, greeting the logged-in administrator as *"Welcome back, Admin User!"* with zero client-side layout shift.
 
 ---
 
 ## 🛠️ Technology Stack
-*   **Core**: Next.js 15+ (App Router), React 19, TypeScript
-*   **Styling**: Tailwind CSS (PostCSS)
+*   **Core**: Next.js 16+ (App Router, Turbopack), React 19, TypeScript
+*   **Security & Auth**: Auth.js (NextAuth v5.0.0-beta), Zod (v4)
+*   **Styling**: Tailwind CSS (v4), PostCSS
 *   **Database**: MongoDB, Mongoose
-*   **UI Components**: AG-Grid Community (React), Lucide React, Recharts
-*   **State Management**: Zustand
+*   **Interactive Components**: AG-Grid Community (React), Lucide React, Recharts, Framer Motion
+*   **State Store**: Zustand (v5)
 
 ---
 
@@ -45,25 +70,25 @@ To eliminate layout shifts (CLS) and keep the UI feeling premium:
 Server-Components/
 ├── src/
 │   ├── app/                 # Next.js App Router
-│   │   ├── (admin)/         # Route Group: Authenticated dashboard pages
+│   │   ├── (admin)/         # Route Group: Secured CRM pages (Dashboard, Candidates)
 │   │   │   ├── candidates/  # Candidates list with Streaming & custom Skeletons
-│   │   │   └── search/      # Global Search with PPR & Simulated Async Streams
-│   │   ├── (public)/        # Route Group: Public Careers/Jobs pages
-│   │   ├── api/             # Next.js Serverless API Endpoints
-│   │   └── globals.css      # Custom Tailwind styling variables
+│   │   │   └── dashboard/   # Live Server Component extracting session info via auth()
+│   │   ├── (public)/        # Route Group: Careers (/jobs), Login, and Registration
+│   │   ├── api/             # Next.js Serverless API Route Handlers
+│   │   │   ├── auth/        # Auth registration & customized pre-validation endpoints
+│   │   │   └── candidates/  # Strict REST endpoints validating payloads with Zod
+│   │   └── globals.css      # Core Tailwind styling variables
 │   │
-│   ├── components/          # Presentation and Business Logic React components
-│   │   ├── candidates/      # AG-Grid Table components & form filters
-│   │   └── ui/              # Atomized UI components (Skeleton, Modal, Badge)
+│   ├── components/          # Reusable component libraries
 │   │
-│   └── lib/                 # Core utilities
-│       ├── models/          # Mongoose Database Models (Candidate, Job, User)
-│       ├── mongodb.ts       # Cached MongoDB Mongoose connection utility
-│       └── utils.ts         # Global utility helpers (cn merger)
+│   ├── auth.ts              # NextAuth v5 Instance with Mongoose Providers
+│   ├── auth.config.ts       # Decoupled base Auth configurations (safe for all runtimes)
+│   ├── proxy.ts             # Next.js 16 Proxy secures routes & request rewrites
+│   └── lib/                 # Core MongoDB models & utility helpers
 │
 ├── next.config.ts           # Next.js engine configuration (PPR enabled)
 ├── tailwind.config.js       # Tailwind configuration
-└── package.json             # Scripts & Dependency manifest
+└── package.json             # NPM package scripts & dependency declarations
 ```
 
 ---
@@ -72,41 +97,29 @@ Server-Components/
 
 ### 1. Prerequisites
 *   Node.js (v18.x or higher)
-*   MongoDB running locally or a MongoDB Atlas URI string.
+*   MongoDB running locally or a MongoDB Atlas connection URI string.
 
 ### 2. Environment Configuration
 Create a `.env.local` file in the root of the project:
 ```env
 MONGODB_URI=mongodb://127.0.0.1:27017/recruitment
+AUTH_SECRET=hiresync-very-secret-development-key-32-chars-long-1234
 ```
 
 ### 3. Installation
-Install all NPM packages:
+Install all required NPM packages:
 ```bash
 npm install
 ```
 
 ### 4. Running the Development Server
-You only need to run a single server now! This spins up the full-stack app on port `3000`:
+Launch the development build on port `3000` under Turbopack:
 ```bash
 npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### 5. Build for Production
-To test optimization and generate static/partial pre-render segments:
-```bash
-npm run build
-```
-Start the compiled production bundle:
-```bash
-npm run start
-```
-
----
-
-## 🏆 Key Demonstration Pages
-
-*   **Global Search (`/search`)**: Demonstrates **PPR + simulated Async Server Component search streams** using an artificial 1-second delay. See the static search box render immediately, followed by pulsing skeletons, and finally, structured results directly from MongoDB.
-*   **Candidates (`/candidates`)**: Showcases true **React Suspense streaming** of complex data grids (AG-Grid). The filters load instantly while the grid skeleton handles database resolving.
-*   **Dashboard (`/dashboard`)**: Demonstrates dynamic connection handling and responsive Server Component rendering.
+### 5. Quick Demo Credentials
+Use these quick logins on the sign-in screen:
+*   **Admin Account**: Username: `admin` \| Password: `password`
+*   **Database Recruiter Account**: Username: `recruiter@hiresync.com` \| Password: `password123`
