@@ -1,130 +1,112 @@
-<<<<<<< HEAD
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ⚡ HireSync - Full-Stack Recruitment CRM (Next.js App Router)
 
-## Getting Started
+HireSync is a high-performance, modern Recruitment CRM and HRMS Dashboard built using Next.js 15+, React, Tailwind CSS, and MongoDB. 
 
-First, run the development server:
+This project demonstrates the peak capabilities of the **Next.js App Router**, leveraging advanced features like **Partial Prerendering (PPR)**, **React Suspense Streaming**, **Server Components**, and custom **Shadcn-style Skeleton animations**.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Features & Architecture Highlights
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### ⚡ 1. Native Full-Stack Architecture (Zero Express)
+We migrated away from the traditional separate frontend/backend architecture. All database controllers, models, and routes now run natively inside Next.js.
+*   **API Route Handlers**: Authentication routes (`/api/auth/login`, `/api/auth/register`) and candidates routes are built directly into `src/app/api`.
+*   **Mongoose Models**: Hotswappable Mongoose schemas with connection caching to optimize serverless execution.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### ◐ 2. Partial Prerendering (PPR)
+Configured using `cacheComponents: true` in `next.config.ts`.
+*   **Instant Shells**: The static parts of the layout (Sidebar, navigation, and page containers) are compiled at build time and served instantly from the edge cache.
+*   **Dynamic Chunks**: Interactive pages like the Search Dashboard and Candidates List load dynamic database content inside targeted placeholders, creating a blazing-fast user experience.
 
-## Learn More
+### 🌊 3. React Suspense Streaming
+Slow database fetches are isolated into nested Server Components and wrapped inside React `<Suspense>` boundaries.
+*   **Non-Blocking SSR**: High-latency MongoDB queries no longer block the page load.
+*   **Table-to-Grid Streaming**: Features like the `/candidates` list table stream directly into the UI over the network.
 
-To learn more about Next.js, take a look at the following resources:
+### 🎨 4. Custom Shadcn-Style Skeleton Placeholders
+To eliminate layout shifts (CLS) and keep the UI feeling premium:
+*   We created an atomic `<Skeleton />` component featuring custom keyframe-pulsing animations.
+*   Tailored page skeletons (like `<CandidatesTableSkeleton />`) precisely mimic the geometry of the target grids while they load.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠️ Technology Stack
+*   **Core**: Next.js 15+ (App Router), React 19, TypeScript
+*   **Styling**: Tailwind CSS (PostCSS)
+*   **Database**: MongoDB, Mongoose
+*   **UI Components**: AG-Grid Community (React), Lucide React, Recharts
+*   **State Management**: Zustand
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-=======
-# 🚀 AI-Powered Recruitment CRM
-
-A professional, high-performance Recruitment Dashboard built with the MERN stack (MongoDB, Express, React, Node.js), featuring advanced React patterns, end-to-end type safety, real-time filtering, and global state management.
-
-## 🌟 Key Features
-
-- **Type-Safe Forms**: Built with React Hook Form and Zod schemas, offering end-to-end type safety, field arrays (e.g. dynamic skills), and async validation capabilities.
-- **Robust Error Handling**: Implements `react-error-boundary` alongside custom class-based boundaries to catch component-level errors seamlessly, combined with `React.lazy` and `Suspense` fallbacks.
-- **Predictable State Management**: Utilizes `Zustand` for complex, highly performant global state architecture, replacing prop-drilling and generic context providers.
-- **Advanced Candidate Search**: Optimized server-side filtering using MongoDB regex combined with frontend `useDebounce` and `useMemo` for instant feedback.
-- **Persistent Data Grids**: Integrated AG Grid with custom `localStorage` logic to remember your column arrangements, widths, and visibility.
-- **Performance Monitoring**: Built-in React Profiler to track rendering efficiency and identify bottlenecks.
-- **Premium UI/UX**: Crafted with Ant Design (v5) and TailwindCSS, featuring glassmorphism, smooth animations, and a sleek dark-mode compatible design system.
-
-## 🛠️ Tech Stack
-
-### Frontend
-- **React 18 + Vite**: Fast, modern frontend framework utilizing `Suspense` and `React.lazy()`.
-- **TypeScript**: Strict type-safe development environment.
-- **React Hook Form + Zod**: High-performance, flexible, and extensible forms with robust schema validation.
-- **Zustand**: Small, fast, and scalable bear-bones state-management.
-- **AG Grid Community**: Professional data grid for complex data handling.
-- **Ant Design & Tailwind CSS**: Comprehensive UI library paired with a utility-first CSS framework for enterprise applications.
-
-### Backend
-- **Node.js & Express**: Robust and scalable REST API layer.
-- **MongoDB & Mongoose**: Flexible document-based data storage.
-- **tsx**: Modern TypeScript execution for the server.
-
-## 🏗️ Advanced React Patterns Implemented
-
-- **React Hook Form + Zod Validation**: Sync/Async form validation seamlessly mapping server errors back to specific form fields.
-- **Error Boundaries & Suspense**: Prevents application crashes and displays elegant skeleton/spinner fallbacks while lazily downloading bundles.
-- **Compound Components**: Highly modular architectural patterns implemented for `Tabs` and `FilterPanel`.
-- **`useDebounce`**: Optimizes search fields by delaying API calls until typing stops.
-- **`useFetch`**: Custom hook for API calls with built-in `AbortController` to prevent memory leaks.
-- **`React.memo` & `useCallback`**: Prevents unnecessary re-renders in heavy components.
-
-## 📂 Project Structure
+## 📂 Folder Structure
 
 ```text
-├── backend/
-│   ├── models/       # Mongoose schemas (Candidate, Job, User)
-│   └── server.ts     # Express server & API routes
+Server-Components/
 ├── src/
-│   ├── components/   # Reusable UI & Layout components
-│   │   ├── common/   # Global shared components (Error Boundaries, Tables)
-│   │   ├── forms/    # React Hook Form configurations
-│   │   └── patterns/ # Advanced architectural pattern components
-│   ├── hooks/        # Custom React hooks (Debounce, Fetch, etc.)
-│   ├── pages/        # Main views (Dashboard, Candidates, Jobs)
-│   ├── schemas/      # Zod validation schemas
-│   ├── services/     # API interaction layer
-│   ├── store/        # Zustand global state definitions
-│   └── types/        # TypeScript interfaces
-├── start-all.bat     # One-click start for Dev environment
-└── package.json      # Project dependencies & scripts
+│   ├── app/                 # Next.js App Router
+│   │   ├── (admin)/         # Route Group: Authenticated dashboard pages
+│   │   │   ├── candidates/  # Candidates list with Streaming & custom Skeletons
+│   │   │   └── search/      # Global Search with PPR & Simulated Async Streams
+│   │   ├── (public)/        # Route Group: Public Careers/Jobs pages
+│   │   ├── api/             # Next.js Serverless API Endpoints
+│   │   └── globals.css      # Custom Tailwind styling variables
+│   │
+│   ├── components/          # Presentation and Business Logic React components
+│   │   ├── candidates/      # AG-Grid Table components & form filters
+│   │   └── ui/              # Atomized UI components (Skeleton, Modal, Badge)
+│   │
+│   └── lib/                 # Core utilities
+│       ├── models/          # Mongoose Database Models (Candidate, Job, User)
+│       ├── mongodb.ts       # Cached MongoDB Mongoose connection utility
+│       └── utils.ts         # Global utility helpers (cn merger)
+│
+├── next.config.ts           # Next.js engine configuration (PPR enabled)
+├── tailwind.config.js       # Tailwind configuration
+└── package.json             # Scripts & Dependency manifest
 ```
+
+---
 
 ## 🚀 Getting Started
 
-### Prerequisites
-- Node.js (v18 or higher)
-- MongoDB running locally (default: `mongodb://127.0.0.1:27017/hrms-dashboard`)
+### 1. Prerequisites
+*   Node.js (v18.x or higher)
+*   MongoDB running locally or a MongoDB Atlas URI string.
 
-### Installation
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Setup environment:
-   Create a `.env` file in the root (optional, defaults are provided in `server.ts`).
-
-### Running the App
-The easiest way to start both the frontend and backend is using the batch script:
-```bash
-start-all.bat
+### 2. Environment Configuration
+Create a `.env.local` file in the root of the project:
+```env
+MONGODB_URI=mongodb://127.0.0.1:27017/recruitment
 ```
-Alternatively:
-- **Start Backend**: `npm run server`
-- **Start Frontend**: `npm run dev`
 
-## 📊 Diagnostic Outputs
-Check the browser console to see the system in action:
-- `FORM DATA: ...` → Detailed outputs of validated Zod schema form data payloads.
-- `[Candidates] Rendering Component` → Verifies React functional component re-renders.
-- `[Profiler] ... duration: ...` → Shows render performance metrics.
+### 3. Installation
+Install all NPM packages:
+```bash
+npm install
+```
+
+### 4. Running the Development Server
+You only need to run a single server now! This spins up the full-stack app on port `3000`:
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### 5. Build for Production
+To test optimization and generate static/partial pre-render segments:
+```bash
+npm run build
+```
+Start the compiled production bundle:
+```bash
+npm run start
+```
 
 ---
-Developed as a high-performance Recruitment solution.
->>>>>>> 9089e4402fa22e944d2e4aa2bd7f5ed4f77b897d
+
+## 🏆 Key Demonstration Pages
+
+*   **Global Search (`/search`)**: Demonstrates **PPR + simulated Async Server Component search streams** using an artificial 1-second delay. See the static search box render immediately, followed by pulsing skeletons, and finally, structured results directly from MongoDB.
+*   **Candidates (`/candidates`)**: Showcases true **React Suspense streaming** of complex data grids (AG-Grid). The filters load instantly while the grid skeleton handles database resolving.
+*   **Dashboard (`/dashboard`)**: Demonstrates dynamic connection handling and responsive Server Component rendering.
